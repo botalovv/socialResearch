@@ -208,7 +208,7 @@ function App() {
         })
       })
 
-      const rawResponse = fetch(`http://v99352mz.beget.tech/index.php?key=${key}`, {
+      const rawResponse = fetch(`https://schumacher.dumk.in/index.php?key=${key}`, {
         method: 'POST',
         mode: "no-cors",
         headers: {
