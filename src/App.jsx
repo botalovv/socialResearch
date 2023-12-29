@@ -2,8 +2,31 @@ import { useState } from 'react'
 import './App.css'
 import ManagerQuestion from './components/ManagerQuestion.jsx';
 
+
+const hashValue = val =>
+  crypto.subtle
+    .digest('SHA-256', new TextEncoder('utf-8').encode(val))
+    .then(h => {
+      let hexes = [],
+        view = new DataView(h);
+      for (let i = 0; i < view.byteLength; i += 4)
+        hexes.push(('00000000' + view.getUint32(i).toString(16)).slice(-8));
+      return hexes.join('');
+    });
+
+const ValidKeyHash = "dc317e2ab4bd5ec9dc34a2575805429166f4b0cf9c578b1778cdbde202961dc7";
+
 function App() {
   const [key, setKey] = useState("");
+  const [keyIsValid, setKeyIsValid] = useState(false);
+
+  const setKeyWithCheck = (key) => {
+    hashValue(key).then(newHash => {
+      setKeyIsValid(newHash == ValidKeyHash)
+      setKey(key)
+    });
+  }
+
   const [user, setUser] = useState("");
   const [blakePeople, setBlakePeople] = useState(0);
   let [counterX, setCounterX] = useState(0);
@@ -111,55 +134,47 @@ function App() {
     "91. Редко бывает так, что я жалею о сказанном.",
   ]);
 
-  const getResult = () => {
-    alert("1");
-  };
-
   const [result, setResult] = useState({});
 
   const response = (state) => {
-    //console.log(state);
     setResult(state);
   };
 
   const getTestResult = (object) => {
 
-    let arrPeopleAlways = [1,3,4,5,7,9,13,17];
+    let arrPeopleAlways = [1, 3, 4, 5, 7, 9, 13, 17];
     let arrPeopleNever = [15];
-    let arrProductionAlways = [2,6,8,11,12];
-    let arrProductionNever = [0,10,14,16];
+    let arrProductionAlways = [2, 6, 8, 11, 12];
+    let arrProductionNever = [0, 10, 14, 16];
 
     for (let key in object) {
-        if (Object.hasOwnProperty.call(object, key)) {
-            let elem = object[key];
-            if (arrPeopleAlways.includes(Number(key))) {
-              
-                if (elem.answer== "Всегда" || elem.answer == "Часто") {
-                  console.log(key)
-                    // setCounterY(counterY + 1);
-                    setCounterY(counterY++);
-                    console.log(counterY)
-                }
-            } else if (arrPeopleNever.includes(Number(key))) {
-                if (elem.answer == "Никогда" || elem.answer == "Редко") {
-                  setCounterY(counterY++);
-                }
-            } 
-            if (arrProductionAlways.includes(Number(key))) {
-                
-                if (elem.answer == "Всегда" || elem.answer == "Часто") {
-                    setCounterX(counterX++);
-                    } 
-                } else if (arrProductionNever.includes(Number(key))) {
-                    
-                    if (elem.answer == "Никогда" || elem.answer == "Редко") {
-                      setCounterX(counterX++);
-                    }
-            } 
+      if (Object.hasOwnProperty.call(object, key)) {
+        let elem = object[key];
+        if (arrPeopleAlways.includes(Number(key))) {
+
+          if (elem.answer == "Всегда" || elem.answer == "Часто") {
+            setCounterY(counterY++);
+          }
+        } else if (arrPeopleNever.includes(Number(key))) {
+          if (elem.answer == "Никогда" || elem.answer == "Редко") {
+            setCounterY(counterY++);
+          }
         }
+        if (arrProductionAlways.includes(Number(key))) {
+
+          if (elem.answer == "Всегда" || elem.answer == "Часто") {
+            setCounterX(counterX++);
+          }
+        } else if (arrProductionNever.includes(Number(key))) {
+
+          if (elem.answer == "Никогда" || elem.answer == "Редко") {
+            setCounterX(counterX++);
+          }
+        }
+      }
     }
     let resultText = "";
-    if(counterY <= 3 && counterX <= 3) {
+    if (counterY <= 3 && counterX <= 3) {
       resultText = "Вы руководите без напряжения, но, возможно, вы могли бы сделать гораздо больше.";
     } else if (counterY > 3 && counterY <= 6 && counterX <= 3) {
       resultText = "Вы заинтересованы в безконфликтной и дружественной атмосфере, вы можете сделать больше, если уделите внимание качеству.";
@@ -176,30 +191,28 @@ function App() {
     } else if (counterY > 3 && counterY <= 6 && counterX > 6 && counterX <= 9) {
       resultText = "Вы эффективный руководитель, попробуйте больше доверять людям и делегировать полномочия, они смогут!";
     } else if (counterY > 6 && counterY <= 9 && counterX > 6 && counterX <= 9) {
-      resultText = "Вы создали отличную команду, которая может свернуть горы, но нет предела совершенству."; 
+      resultText = "Вы создали отличную команду, которая может свернуть горы, но нет предела совершенству.";
     }
-     console.log (counterY, counterX);
-     alert(resultText);
-};
+    setCounterX(counterX = 0);
+    setCounterY(counterY = 0);
+    alert(resultText);
+
+
+  };
 
   const submit = () => {
-    
+   
+
     if (questionListManager.length != Object.keys(result).length) {
       alert("Вы ответили не на все вопросы");
-    } else {
-      
-      //console.log(result);
-
-      // for (const key in result) {
-      //   if (Object.hasOwnProperty.call(result, key)) {
-      //     const elem = result[key];
-      //     if ((key = 1) || (key = 3) || (key = 4) || (key = 5) || (key = 7) || (key = 9) || (key = 13) || (key = 15) || (key = 17)) {
-      //       console.log(elem)
-      //     }
-          
-      //   }
-      // }
-
+    } else if (user == "") {
+      alert("Вы не заполнили должность");
+    } else if (key == "") {
+      alert("Вы не заполнили ключ тестирования");
+    } else if (!keyIsValid) {
+      alert("Кажется это не верный ключ!");
+    }
+    else {
       let responseForm = [];
       Object.keys(result).forEach(function (s, i) {
         responseForm.push({
@@ -224,15 +237,13 @@ function App() {
       }).then(function (content) {
         getTestResult(responseForm);
       });
-
-      console.log(responseForm);
     }
   };
 
   return (
     <div className="App">
       <div className="container">
-        <h1>Социальное исследование</h1>
+        <h1>Узнайте, какой вы руководитель</h1>
         <p className="introduction">
           В современной психологии управления много внимания уделяется непосредственно характеристикам личности руководителя.
           В условиях высокой скорости изменений и необходимости принятия решений в неопределённости некоторые из качеств
@@ -249,7 +260,7 @@ function App() {
           ))}
         </div>
         <div className="footer">
-          <input className="styledInput footerInput" type="text" placeholder="Ключ от тестирования" name="key" value={key} onChange={(e) => setKey(e.target.value)} />
+          <input className={"styledInput footerInput " + (keyIsValid ? "valid" : "invalid")} type="text" placeholder="Ключ от тестирования" name="key" value={key} onChange={(e) => setKeyWithCheck(e.target.value)} />
           <button className="submitButton" onClick={submit}>Завершить тестирование</button>
         </div>
       </div>
