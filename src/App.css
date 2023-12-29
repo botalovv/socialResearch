@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  padding: 0; 
+  
+}
+
+.App {
+  font-size: 20px;
+  font-family: 'Noto Serif', serif;
+}
+
+.container {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.introduction {
+  width: 80%; 
+}
+
+.questionContainer {
+  width: 80%;
+  height: 10%;
+  justify-content: center;  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.submitButton {
+  background-color: gray;
+  border-radius: 5px;
+  height: 40px;
+  width: 120px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.styledInput {
+  width: 180px;
+  height: 20px;
+  border-radius: 5px;
+  display: block;
+  margin-bottom: 20px;
+  border: 1px solid gray;
+  text-indent: 10px;
+}
+
+.position {
+  width: 30% !important;
+}
+
+.footer {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 820px) {
+  .position {
+    width: 150px !important;
+  }
+}

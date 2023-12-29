@@ -1,0 +1,53 @@
+.manager {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4%;
+    border: 1px solid gray;
+    border-radius: 5px;
+   
+}
+
+.radioButtons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.radioContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    /* padding-left: 3%; */
+    padding-bottom: 3%;
+    width: 80%;
+    /* box-sizing: border-box; */
+}
+
+
+@media (max-width: 820px) {
+    .manager {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+        /* font-size: 20px; */
+        width: 250px;
+        /* justify-content: center;     */
+    }
+
+    .radioButtons {
+        /* display: flex; */
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 5%;
+    }
+    
+    .radioContainer {
+        margin-left: 0;
+        padding-top: 5%;
+    }
+
+    .question {
+        width: auto;
+        
+    }
+} 
