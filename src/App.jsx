@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import ManagerQuestion from './components/managerQuestion';
+import ManagerQuestion from './components/ManagerQuestion.jsx';
 
 function App() {
   const [key, setKey] = useState("");
