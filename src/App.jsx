@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 import ManagerQuestion from './components/ManagerQuestion.jsx';
+import SelfRegulationQuestion from './components/SelfRegulationQuestion.jsx';
+import ReflexivityQuestion from './components/ReflexivityQuestion.jsx';
 
 
 const hashValue = val =>
@@ -31,6 +33,9 @@ function App() {
   const [blakePeople, setBlakePeople] = useState(0);
   let [counterX, setCounterX] = useState(0);
   let [counterY, setCounterY] = useState(0);
+  let [counterSelfReg, setCounterSelfReg] = useState(0);
+  let [reflexivityCounter, setReflexivityCounter] = useState(0);
+
   //Решетка менеджмента
   const [questionListManager, setQuestionListManager] = useState([
     "1. Я действую как представитель своего коллектива.",
@@ -54,7 +59,7 @@ function App() {
   ]);
 
   //Диагностика саморегуляции человека
-  const [arr2, setArr2] = useState([
+  const [selfRegulationArray, setSelfRegulationArray] = useState([
     "19. Свои планы на будущее люблю разрабатывать в малейших деталях.",
     "20. Люблю всякие приключения, могу идти на риск.",
     "21. Стараюсь всегда приходить вовремя, но тем не менее часто опаздываю.",
@@ -104,7 +109,7 @@ function App() {
   ]);
 
   // Методика определения уровня рефлексивности
-  const [arr3, setArr3] = useState([
+  const [reflexivityArray, setReflexivityArray] = useState([
     "65. Прочитав хорошую книгу, я всегда потом долгое время думаю о ней, хочется с кем-нибудь ее обсудить.",
     "66. Когда меня вдруг неожиданно о чем-то спросят, я могу ответить первое, что пришло в голову.",
     "67. Прежде чем снять трубку телефона, чтобы позвонить по делу, я обычно мысленно планирую предстоящий разговор.",
@@ -135,10 +140,22 @@ function App() {
   ]);
 
   const [result, setResult] = useState({});
+  const [resultSelfReg, setResultSelfReg] = useState({});
+  const [resultReflexivity, setResultReflexivity] = useState({});
 
   const response = (state) => {
     setResult(state);
+    //console.log(result);
   };
+
+  const responceSelfReg = (state) => {
+    setResultSelfReg(state);
+    //console.log(resultSelfReg);
+  };
+
+  const responceReflexivity = (state) => {
+    setResultReflexivity(state);
+  }
 
   const getTestResult = (object) => {
 
@@ -146,10 +163,16 @@ function App() {
     let arrPeopleNever = [15];
     let arrProductionAlways = [2, 6, 8, 11, 12];
     let arrProductionNever = [0, 10, 14, 16];
+    let arrSelfRegYes = [18, 19, 21, 25, 28, 29, 31, 34, 37, 38, 39, 42, 44, 45, 46, 47, 48, 52, 53, 54, 55, 57, 60, 61, 62, 63];
+    let arrSelfRegNo = [20, 22, 23, 24, 26, 27, 30, 32, 33, 35, 36, 40, 41, 43, 49, 50, 51, 56, 58, 59];
+    let arrReflexivityYes = [64, 66, 67, 68, 72, 73, 74, 77, 78, 81, 82, 83, 85, 87, 88];
+    let arrReflexivityNo = [65, 69, 70, 71, 75, 76, 79, 80, 84, 86, 89, 90];
 
     for (let key in object) {
       if (Object.hasOwnProperty.call(object, key)) {
         let elem = object[key];
+        
+        //Подсчет итогов второй части теста
         if (arrPeopleAlways.includes(Number(key))) {
 
           if (elem.answer == "Всегда" || elem.answer == "Часто") {
@@ -171,9 +194,58 @@ function App() {
             setCounterX(counterX++);
           }
         }
+
+        //Подсчет итогов второй части теста
+        if (key >= 18 && key <= 63) {
+          if (arrSelfRegYes.includes(Number(key)) && (elem.answer == "Верно" || elem.answer == "Пожалуй, верно")) {
+            setCounterSelfReg(counterSelfReg++);
+          } else if (arrSelfRegNo.includes(Number(key)) && (elem.answer == "Пожалуй, неверно" || elem.answer == "Неверно")) {
+            setCounterSelfReg(counterSelfReg++);
+          }
+        }
+
+        //Подсчет итогов третьей части теста
+        if (key >= 64 && key <= 90) {
+          console.log(reflexivityCounter, key, elem.answer)
+          if (arrReflexivityYes.includes(Number(key))) {
+            if (elem.answer == "Абсолютно неверно") {
+              setReflexivityCounter(reflexivityCounter += 1);
+            } else if (elem.answer == "Неверно") {
+              setReflexivityCounter(reflexivityCounter += 2);
+            } else if (elem.answer == "Скорее неверно") {
+              setReflexivityCounter(reflexivityCounter += 3);
+            } else if (elem.answer == "Не знаю") {
+              setReflexivityCounter(reflexivityCounter += 4);
+            } else if (elem.answer == "Скорее верно") {
+              setReflexivityCounter(reflexivityCounter += 5);
+            } else if (elem.answer == "Верно") {
+              setReflexivityCounter(reflexivityCounter += 6);
+            } else if (elem.answer == "Совершенно верно") {
+              setReflexivityCounter(reflexivityCounter += 7);
+            }
+          }
+        }  
+        if (arrReflexivityNo.includes(Number(key))) {
+          if (elem.answer == "Абсолютно неверно") {
+            setReflexivityCounter(reflexivityCounter += 7);
+          } else if (elem.answer == "Неверно") {
+            setReflexivityCounter(reflexivityCounter += 6);
+          } else if (elem.answer == "Скорее неверно") {
+            setReflexivityCounter(reflexivityCounter += 5);
+          } else if (elem.answer == "Не знаю") {
+            setReflexivityCounter(reflexivityCounter += 4);
+          } else if (elem.answer == "Скорее верно") {
+            setReflexivityCounter(reflexivityCounter += 3);
+          } else if (elem.answer == "Верно") {
+            setReflexivityCounter(reflexivityCounter += 2);
+          } else if (elem.answer == "Совершенно верно") {
+            setReflexivityCounter(reflexivityCounter += 1);
+          }
+        }
       }
     }
     let resultText = "";
+    //Интерпретация первой части теста
     if (counterY <= 3 && counterX <= 3) {
       resultText = "Вы руководите без напряжения, но, возможно, вы могли бы сделать гораздо больше.";
     } else if (counterY > 3 && counterY <= 6 && counterX <= 3) {
@@ -193,34 +265,70 @@ function App() {
     } else if (counterY > 6 && counterY <= 9 && counterX > 6 && counterX <= 9) {
       resultText = "Вы создали отличную команду, которая может свернуть горы, но нет предела совершенству.";
     }
+
+    //Интерпретация второй части теста
+    if (counterSelfReg <= 23) {
+      resultText = resultText + " Вы испытываете трудности в том, чтобы продумать пути и способы достижения своих целей и строить планы на будущее. Вы также можете часто испытывать тревожность и напряжение.";
+    } else if (counterSelfReg > 23 && counterSelfReg <= 32) {
+      resultText = resultText + " Вы стремитесь планировать свою деятельность, но вас может сбить с толку изменение условий и ситуации. Вы скорее склонны фиксировать внимание на своих ошибках и самокритике, чем на способах и возможностях для достижении цели.";
+    } else if (counterSelfReg > 32) {
+      resultText = resultText + " Вы умеете ставить цели и планировать их достижение. Вы также быстро адаптируетесь к изменениям и способны к адекватной оценке ситуации. Вы скорее обращаете внимание на возможности, чем долго переживаете об ошибках."
+    }
+
+    //Интерпретация третьей части теста
+    if (reflexivityCounter < 114) {
+      resultText = resultText + " Вы не всегда думаете о последствиях своих поступков и можете принимать решения без детального анализа ситуации. Вам может быть сложно понять других людей и причины их поведения";
+    } else if (reflexivityCounter >= 114 && reflexivityCounter < 140) {
+      resultText = resultText + " Вы не склонны к педантичному анализу своей деятельности и поступков других людей. Тем не менее, вы вдумчивы и можете действовать как спонтанно, так и заранее подумав о последствиях принятых вами решений.";
+    } else if (reflexivityCounter >= 140) {
+      resultText = resultText + " Вы склонны анализировать свою деятельность и поступки других людей, выявлять причинно-следственные связи в событиях в прошлом и будущем. Вы обдумываете и планируете свои действия и задумываетесь об их последствиях. Вы также умеете поставить себя на место другого человека."
+    }
+
+
+
+    console.log(reflexivityCounter);
     setCounterX(counterX = 0);
     setCounterY(counterY = 0);
+    setCounterSelfReg(counterSelfReg = 0);
+    setReflexivityCounter(reflexivityCounter = 0);
     alert(resultText);
-
-
+    //return resultText;
   };
 
   const submit = () => {
-   
 
-    if (questionListManager.length != Object.keys(result).length) {
+    if (questionListManager.length != Object.keys(result).length || selfRegulationArray.length != Object.keys(resultSelfReg).length) {
       alert("Вы ответили не на все вопросы");
     } else if (user == "") {
       alert("Вы не заполнили должность");
     } else if (key == "") {
       alert("Вы не заполнили ключ тестирования");
     } else if (!keyIsValid) {
-      alert("Кажется это не верный ключ!");
+      alert("Кажется это неверный ключ!");
     }
     else {
       let responseForm = [];
       Object.keys(result).forEach(function (s, i) {
         responseForm.push({
-          question: questionListManager[i],
-          answer: result[i]
+          question: `${i + 1} `,
+          answer: result[i],
         })
-      })
+      });
 
+      Object.keys(resultSelfReg).forEach(function (s, i) {
+        responseForm.push({
+          question: `${i + 19} `,
+          answer: resultSelfReg[i],
+        })
+      });
+
+      Object.keys(resultReflexivity).forEach(function (s, i) {
+        responseForm.push({
+          question: `${i + 65} `,
+          answer: resultReflexivity[i],
+        })
+      });
+      console.log(responseForm)
       const rawResponse = fetch(`https://schumacher.dumk.in/index.php?key=${key}`, {
         method: 'POST',
         mode: "no-cors",
@@ -235,6 +343,7 @@ function App() {
       }).then(function (response) {
         return response.text();
       }).then(function (content) {
+        console.log(responseForm);
         getTestResult(responseForm);
       });
     }
@@ -252,11 +361,25 @@ function App() {
         <input className="styledInput position" type="text" placeholder="Ваша должность" onChange={(e) => setUser(e.target.value)} />
         <div className="questionContainer">
           {questionListManager.map((question, i) => (
-            <ManagerQuestion question={question} id={i} response={(answer) => {
-              let state = { ...result };
+            <ManagerQuestion question={question} id={i + "manager"} response={(answer) => {
+              let state = { ...result };//!!!!
               state[i] = answer;
               response(state);
             }} key={question} />
+          ))}
+          {selfRegulationArray.map((question, i) => (
+            <SelfRegulationQuestion question={question} id={i + 18} response={(answer) => {
+              let state = { ...resultSelfReg }; //!!!! Создать новое состояние для каждого массива и добавить их проверку в условие в submit функции
+              state[i] = answer;
+              responceSelfReg(state);
+            }} key={question} />
+          ))}
+          {reflexivityArray.map((question, i) => (
+            <ReflexivityQuestion question={question} id={i + 64} response={(answer) => {
+              let state = { ...resultReflexivity };
+              state[i] = answer;
+              responceReflexivity(state);
+            }} key={question}/>
           ))}
         </div>
         <div className="footer">
