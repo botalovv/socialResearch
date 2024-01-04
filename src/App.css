@@ -75,7 +75,7 @@ body {
   outline-color: red !important;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1600px) {
   .reflexivity {
     flex-direction: column;
     align-items: center;
